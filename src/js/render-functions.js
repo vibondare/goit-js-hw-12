@@ -1,10 +1,13 @@
 import simpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 import { gallery } from '../main.js';
+import { loadButton } from '../main.js';
+
 import { addLoader } from '../main.js';
 import { hideLoader } from '../main.js';
+import { showLoadButton } from '../main.js';
 import { loadingMessageContainer } from '../main.js';
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
 
 export function renderGallery(imagesData) {
   const data = imagesData.hits;
@@ -47,7 +50,9 @@ export function renderGallery(imagesData) {
     )
     .join('');
 
-  gallery.innerHTML = markup;
+  gallery.insertAdjacentHTML('beforeend', markup);
+
+  showLoadButton();
 
   const lightbox = new simpleLightbox('.gallery a', {
     captionsData: 'alt',

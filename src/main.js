@@ -6,8 +6,11 @@ const searchForm = document.querySelector('.search-form');
 export const searchInput = document.querySelector('#search-input');
 export const gallery = document.querySelector('.gallery');
 export const loadingMessageContainer = document.querySelector('.loading-message-container');
+export const loadButtonContainer = document.querySelector('.load-button-container');
+export const loadButton = document.querySelector('.load-button');
 
 searchForm.addEventListener("submit", submitSearch);
+// loadButton.addEventListener("click", loadMoreImages);
 
 export function addLoader() {
   loadingMessageContainer.classList.add(
@@ -21,6 +24,14 @@ export function hideLoader() {
   );
 }
 
+export function showLoadButton() {
+  loadButtonContainer.style.display = 'block';
+}
+
+export function hideLoadButton() {
+  loadButtonContainer.style.display = 'none';
+}
+
 function submitSearch(event) {
   event.preventDefault();
 
@@ -32,11 +43,15 @@ function submitSearch(event) {
   const basicLink = 'https://pixabay.com/api/';
   const q = searchInput.value;
 
-  const link = `${basicLink}?key=${key}&q=${q}&image_type='photo'&orientation='horizontal'&safesearch=true`;
+  const link = `${basicLink}?key=${key}&q=${q}&image_type=photo&orientation=horizontal&safesearch=true`;
 
   addLoader();
 
   getImages(link);
 }
+
+// function loadMoreImages() {
+
+// }
 
 

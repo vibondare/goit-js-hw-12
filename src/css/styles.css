@@ -4,6 +4,8 @@ body {
   font-family: 'Montserrat', sans-serif;
   font-style: normal;
   box-sizing: border-box;
+  width: 1128px;
+  margin: 15px auto;
 }
 
 /* styles for the search form */
@@ -17,7 +19,7 @@ body {
 #search-input {
   font-family: 'Montserrat', sans-serif;
   font-size: 16px;
-  color: #2E2F42;
+  color: #2e2f42;
   padding: 8px 16px;
   width: 272px;
   margin-right: 8px;
@@ -36,8 +38,9 @@ body {
   background-color: #fff;
 }
 
-#search-input:active,  #search-input:focus {
-  border-color: #4E75FF;
+#search-input:active,
+#search-input:focus {
+  border-color: #4e75ff;
   background-color: #fff;
 }
 
@@ -55,8 +58,28 @@ body {
   color: #fff;
 }
 
+.load-button-container {
+  margin: 24px auto;
+  width: 126px;
+  display: none;
+}
+
+.load-button {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  padding: 8px 16px;
+  border-radius: 8px;
+  outline: none;
+  border: none;
+  background-color: #4e75ff;
+  color: #fff;
+  min-width: 126px;
+}
+
 .search-button:hover {
-  background-color: #6C8CFF;
+  background-color: #6c8cff;
 }
 
 .loading-message-container {
@@ -101,7 +124,6 @@ body {
   align-items: center;
   gap: 20px;
   padding: 4px 0;
-  
 }
 
 .image-properties-list-item {
