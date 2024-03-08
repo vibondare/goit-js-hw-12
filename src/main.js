@@ -49,7 +49,6 @@ function submitSearch(event) {
   addLoader();
 
   let lightbox;
-  let currentQuery;
 
   let page = 1;
   let elementsPerPage = 15;
@@ -83,8 +82,6 @@ function submitSearch(event) {
         captionsData: 'alt',
       });
 
-      currentQuery = q;
-
       showLoadButton();
     })
     .catch(error => alert(error.message));
@@ -94,20 +91,19 @@ function submitSearch(event) {
   function loadMoreImages() {
     page++;
 
-    fetchImages(currentQuery, page, elementsPerPage)
+    fetchImages(q, page, elementsPerPage)
       .then(data => {
         gallery.insertAdjacentHTML('beforeend', renderGallery(data.hits));
 
-        const maxPages = Math.floor(data.totalHits / elementsPerPage);
+        const maxPages = Math.ceil(data.totalHits / elementsPerPage);
         console.log(maxPages);
-        if (page > maxPages) {
+        if (page === maxPages) {
           iziToast.show({
             message: `We're sorry, but you've reached the end of search results.`,
             position: 'topRight',
           });
 
           hideLoadButton();
-          return;
         }
 
         lightbox.refresh();
