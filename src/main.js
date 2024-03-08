@@ -1,34 +1,39 @@
-import { getImages } from './js/pixabay-api';
-import iziToast from "izitoast";
-import "izitoast/dist/css/iziToast.min.css";
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+import simpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
+import { fetchImages } from './js/pixabay-api';
+import { renderGallery } from './js/render-functions';
+
+import errorIcon from './img/error-icon.svg';
 
 const searchForm = document.querySelector('.search-form');
-export const searchInput = document.querySelector('#search-input');
-export const gallery = document.querySelector('.gallery');
-export const loadingMessageContainer = document.querySelector('.loading-message-container');
-export const loadButtonContainer = document.querySelector('.load-button-container');
-export const loadButton = document.querySelector('.load-button');
+const searchInput = document.querySelector('#search-input');
+const gallery = document.querySelector('.gallery');
+const loadingMessageContainer = document.querySelector(
+  '.loading-message-container'
+);
+const loadButtonContainer = document.querySelector('.load-button-container');
+const loadButton = document.querySelector('.load-button');
 
-searchForm.addEventListener("submit", submitSearch);
-// loadButton.addEventListener("click", loadMoreImages);
+searchForm.addEventListener('submit', submitSearch);
 
-export function addLoader() {
-  loadingMessageContainer.classList.add(
-    'loading-message-container-is-visible'
-  );
+function addLoader() {
+  loadingMessageContainer.classList.add('loading-message-container-is-visible');
 }
 
-export function hideLoader() {
+function hideLoader() {
   loadingMessageContainer.classList.remove(
     'loading-message-container-is-visible'
   );
 }
 
-export function showLoadButton() {
+function showLoadButton() {
   loadButtonContainer.style.display = 'block';
 }
 
-export function hideLoadButton() {
+function hideLoadButton() {
   loadButtonContainer.style.display = 'none';
 }
 
@@ -39,19 +44,86 @@ function submitSearch(event) {
     return;
   }
 
-  const key = '42569288-7bb99e6b1dd10eb6153443a4f';
-  const basicLink = 'https://pixabay.com/api/';
-  const q = searchInput.value;
-
-  const link = `${basicLink}?key=${key}&q=${q}&image_type=photo&orientation=horizontal&safesearch=true`;
+  gallery.innerHTML = '';
 
   addLoader();
 
-  getImages(link);
+  let lightbox;
+  let currentQuery;
+
+  let page = 1;
+  let elementsPerPage = 15;
+  const q = searchInput.value;
+  const resp = fetchImages(q, page, elementsPerPage);
+
+  resp
+    .then(data => {
+      if (data.hits.length === 0) {
+        iziToast.show({
+          message:
+            'Sorry, there are no images matching your search query. Please try again!',
+          backgroundColor: '#B51B1B',
+          messageColor: '#FFFFFF',
+          position: 'topRight',
+          theme: 'dark',
+          iconUrl: errorIcon,
+        });
+
+        hideLoader();
+        hideLoadButton();
+        return;
+      }
+
+      const markup = renderGallery(data.hits);
+      gallery.insertAdjacentHTML('beforeend', markup);
+
+      hideLoader();
+
+      lightbox = new simpleLightbox('.gallery a', {
+        captionsData: 'alt',
+      });
+
+      currentQuery = q;
+
+      showLoadButton();
+    })
+    .catch(error => alert(error.message));
+
+  loadButton.addEventListener('click', loadMoreImages);
+
+  function loadMoreImages() {
+    page++;
+
+    fetchImages(currentQuery, page, elementsPerPage)
+      .then(data => {
+        gallery.insertAdjacentHTML('beforeend', renderGallery(data.hits));
+
+        const maxPages = Math.floor(data.totalHits / elementsPerPage);
+        console.log(maxPages);
+        if (page > maxPages) {
+          iziToast.show({
+            message: `We're sorry, but you've reached the end of search results.`,
+            position: 'topRight',
+          });
+
+          hideLoadButton();
+        }
+
+        lightbox.refresh();
+
+        function smoothScroll() {
+          const cardHeight = document
+            .querySelector('.gallery-item')
+            .getBoundingClientRect().height;
+
+          window.scrollBy({
+            top: cardHeight * 2,
+            behavior: 'smooth',
+          });
+        }
+
+        smoothScroll();
+      })
+      .catch(error => alert(error.message));
+  }
 }
-
-// function loadMoreImages() {
-
-// }
-
-
