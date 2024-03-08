@@ -107,6 +107,7 @@ function submitSearch(event) {
           });
 
           hideLoadButton();
+          return;
         }
 
         lightbox.refresh();
