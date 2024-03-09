@@ -77,6 +77,25 @@ function submitSearch(event) {
         return;
       }
 
+      if (data.totalHits <= 15) {
+        iziToast.show({
+          message: `We're sorry, but you've reached the end of search results.`,
+          position: 'topRight',
+        });
+
+        hideLoader();
+        hideLoadButton();
+
+        const markup = renderGallery(data.hits);
+        gallery.insertAdjacentHTML('beforeend', markup);
+
+        lightbox = new simpleLightbox('.gallery a', {
+          captionsData: 'alt',
+        });
+
+        return;
+      }
+
       const markup = renderGallery(data.hits);
       gallery.insertAdjacentHTML('beforeend', markup);
 
